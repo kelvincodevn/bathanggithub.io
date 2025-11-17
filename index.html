@@ -1,1 +1,1202 @@
-<h1>Hello World!</h1>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZSD4 - O2C Cockpit Wireframe</title>
+    <style>
+        /* ========== GLOBAL ========== */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 12px;
+        }
+
+        /* ========== APP BAR (PF-STATUS STYLE) ========== */
+        .app-bar {
+            background-color: #ffffff;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .app-button {
+            background-color: #f0f0f0;
+            border: 1px solid #c0c0c0;
+            border-radius: 4px;
+            padding: 8px 16px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .app-button:hover { background-color: #e0e0e0; }
+
+        .app-button .icon {
+            font-size: 1.2em;
+            margin-right: 6px;
+        }
+
+        .app-button.back {
+            background-color: #feefef;
+            border-color: #e0b0b0;
+        }
+
+        /* ========== HOME: SEARCH FILTER BOXES (OPTION A) ========== */
+        #filter-bar {
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 12px 16px;
+            margin-top: 12px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .filter-box {
+            flex: 1;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 10px 12px;
+            background-color: #fafafa;
+        }
+
+        .filter-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .filter-row label {
+            width: 110px;
+            font-weight: 500;
+        }
+
+        .filter-row input {
+            flex: 1;
+            padding: 4px 6px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        /* ========== HOME: DASHBOARD (SCREEN 0100) ========== */
+        #dashboard-content {
+            margin-top: 16px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .dashboard-box {
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .box-title {
+            background-color: #f7f7f7;
+            border-bottom: 1px solid #ccc;
+            padding: 12px 16px;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .box-title .icon {
+            font-size: 1.3em;
+            margin-right: 10px;
+            color: #4a90e2;
+        }
+
+        .worklist-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .worklist-item:last-child { border-bottom: none; }
+
+        .worklist-item .icon {
+            font-size: 1.2em;
+            width: 24px;
+            text-align: center;
+            margin-right: 12px;
+        }
+
+        .worklist-item a {
+            text-decoration: none;
+            color: #0b74d0;
+            font-weight: 500;
+        }
+
+        .icon-red { color: #c00; }
+        .icon-yellow { color: #f5a623; }
+        .icon-green { color: #2e8b57; }
+
+        /* ========== POPUPS (POPUP_TO_DECIDE_LIST STYLE) ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            border-radius: 6px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 420px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 12px 16px;
+            background-color: #354a5f;
+            color: white;
+            font-weight: bold;
+            border-radius: 6px 6px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 16px 16px 18px;
+        }
+
+        .modal-body button {
+            background-color: #f0f0f0;
+            border: 1px solid #c0c0c0;
+            padding: 10px 12px;
+            width: 100%;
+            text-align: left;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 8px;
+            border-radius: 4px;
+        }
+
+        .modal-body button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .modal-body small {
+            display: block;
+            color: #666;
+            margin-top: 2px;
+            font-size: 12px;
+        }
+
+        /* ========== MASS UPLOAD SCREEN 0200 ========== */
+        #summary-box {
+            background-color: #ffffff;
+            border: 1px solid #d1d1d1;
+            border-radius: 4px;
+            padding: 16px;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        .summary-line {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .summary-line span {
+            margin-left: 8px;
+            margin-right: 20px;
+            min-width: 150px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        #main-content { margin-top: 12px; }
+
+        #welcome-screen {
+            background: #fff;
+            border: 1px solid #d1d1d1;
+            padding: 40px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .tab-buttons {
+            overflow: hidden;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .tab-button {
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            cursor: pointer;
+            padding: 10px 15px;
+            margin-right: 4px;
+            border-radius: 4px 4px 0 0;
+            font-weight: bold;
+        }
+
+        .tab-button.active {
+            background-color: #ffffff;
+            border-bottom: 1px solid #ffffff;
+            position: relative;
+            bottom: -1px;
+        }
+
+        .tab-pane {
+            display: none;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-top: none;
+            padding: 10px;
+        }
+
+        .tab-pane.active { display: block; }
+
+        .alv-container {
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+        }
+
+        .alv-container h4 {
+            margin: 0;
+            padding: 6px 10px;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #eee;
+        }
+
+        .alv-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .alv-grid {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1800px;
+        }
+
+        .alv-grid th,
+        .alv-grid td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .alv-grid th { background-color: #f0f5fa; }
+
+        .cell-error { background-color: #ffdddd !important; }
+        .cell-incomplete { background-color: #fffacd !important; }
+
+        .alv-grid td input {
+            width: 95%;
+            border: 1px solid #ccc;
+            padding: 4px;
+            box-sizing: border-box;
+        }
+
+        .alv-grid td input.locked {
+            background-color: #f4f4f4;
+            border: none;
+            color: #555;
+        }
+
+        /* ========== SEARCH RESULT SCREEN 0300 ========== */
+        #search-summary {
+            margin-top: 12px;
+            background-color: #ffffff;
+            border-radius: 4px;
+            border: 1px solid #d0d0d0;
+            padding: 10px 14px;
+            font-size: 13px;
+        }
+
+        #search-summary strong {
+            font-weight: 600;
+        }
+
+        .info-line {
+            margin-bottom: 4px;
+        }
+
+        /* ================= SEARCH RESULT COLOR CODING ================= */
+
+        .phase-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .phase-order       { background-color: #1976d2; } /* xanh dương */
+        .phase-delivery    { background-color: #f57c00; } /* cam */
+        .phase-billing     { background-color: #7b1fa2; } /* tím */
+        .phase-accounting  { background-color: #2e7d32; } /* xanh lá */
+
+        /* STATUS BADGE */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .status-complete      { background-color: #2e7d32; }  /* xanh lá */
+        .status-inprocess     { background-color: #0277bd; }  /* xanh dương nhạt */
+        .status-warning       { background-color: #fbc02d; color: #000; }  /* vàng */
+        .status-error         { background-color: #d32f2f; }   /* đỏ */
+        .status-released      { background-color: #6a1b9a; }   /* tím */
+        .status-cleared       { background-color: #009688; }   /* teal */
+
+
+    </style>
+</head>
+<body>
+
+<!-- ===================== SCREEN 0100 - HOME CENTER ===================== -->
+<div id="screen-0100-home">
+    <!-- APP BAR (Home) -->
+    <div class="app-bar">
+        <button class="app-button" id="btn-manage-so">
+            <span class="icon">📄</span> Manage Sales Order
+        </button>
+        <button class="app-button" id="btn-manage-dlv">
+            <span class="icon">🚚</span> Manage Delivery
+        </button>
+        <button class="app-button" id="btn-manage-bil">
+            <span class="icon">🧾</span> Manage Billing
+        </button>
+        <button class="app-button" id="btn-overview">
+            <span class="icon">📊</span> Overview
+        </button>
+        <!-- NEW: Search button on same row -->
+        <button class="app-button" id="btn-search" style="margin-left:auto;">
+            <span class="icon">🔍</span> Search
+        </button>
+    </div>
+
+    <!-- FILTER BOXES (Option A) -->
+    <div id="filter-bar">
+        <!-- Box 1: Organization Data -->
+        <div class="filter-box">
+            <div class="filter-title">Organization Data</div>
+            <div class="filter-row">
+                <label for="sel-sales-org">Sales Org:</label>
+                <input type="text" id="sel-sales-org" value="VTBI">
+            </div>
+            <div class="filter-row">
+                <label for="sel-comp-code">Company Code:</label>
+                <input type="text" id="sel-comp-code" value="1000">
+            </div>
+        </div>
+
+        <!-- Box 2: Document Information -->
+        <div class="filter-box">
+            <div class="filter-title">Document Information</div>
+            <div class="filter-row">
+                <label for="sel-order-no">Sales Order:</label>
+                <input type="text" id="sel-order-no" value="80000001">
+            </div>
+            <div class="filter-row">
+                <label for="sel-delivery-no">Delivery:</label>
+                <input type="text" id="sel-delivery-no" placeholder="8xxxxxxx">
+            </div>
+            <div class="filter-row">
+                <label for="sel-billing-no">Billing:</label>
+                <input type="text" id="sel-billing-no" placeholder="9xxxxxxx">
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD OVERVIEW BOXES -->
+    <div id="dashboard-content">
+        <div class="dashboard-box" id="box-sales">
+            <div class="box-title"><span class="icon">📄</span> Sales Order Blocks</div>
+            <div class="worklist-item">
+                <span class="icon icon-red">❌</span>
+                <span class="text">
+                    <a href="#" id="link-credit-block">32 Orders</a> are blocked for Credit
+                </span>
+            </div>
+            <div class="worklist-item">
+                <span class="icon icon-yellow">⚠️</span>
+                <span class="text">
+                    <a href="#" id="link-atp-block">15 Orders</a> are blocked for Availability (ATP)
+                </span>
+            </div>
+        </div>
+
+        <div class="dashboard-box" id="box-delivery">
+            <div class="box-title"><span class="icon">🚚</span> Delivery Worklist</div>
+            <div class="worklist-item">
+                <span class="icon icon-green">✅</span>
+                <span class="text">
+                    <a href="#" id="link-pgi-ready">45 Deliveries</a> are ready for PGI
+                </span>
+            </div>
+            <div class="worklist-item">
+                <span class="icon icon-red">⏰</span>
+                <span class="text">
+                    <a href="#" id="link-pgi-overdue">8 Deliveries</a> are Overdue for PGI
+                </span>
+            </div>
+        </div>
+
+        <div class="dashboard-box" id="box-billing">
+            <div class="box-title"><span class="icon">🧾</span> Billing Worklist</div>
+            <div class="worklist-item">
+                <span class="icon icon-green">💲</span>
+                <span class="text">
+                    <a href="#" id="link-billing-due">62 Items</a> are due for Billing
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== SCREEN 0200 - MASS UPLOAD ===================== -->
+<div id="screen-0200-mass-upload" style="display: none;">
+    <div class="app-bar">
+        <button class="app-button back" id="btn-back-to-home">
+            <span class="icon">⬅️</span> Back to Home
+        </button>
+
+        <div class="dropdown" style="position:relative; margin-left:8px;">
+            <button class="app-button" id="btn-upload">⬇️ Upload Data ▼</button>
+        </div>
+
+        <button class="app-button" id="btn-download">⬆️ Download Template</button>
+        <button class="app-button" id="btn-validate" style="display: none;">🔄 Re-Validate</button>
+        <button class="app-button" id="btn-save-staging" style="display: none;">💾 Save Staging</button>
+        <button class="app-button" id="btn-create-so" style="display: none;">🚀 Create Sales Order</button>
+    </div>
+
+    <div id="summary-box" style="display: none;"></div>
+
+    <div id="main-content">
+        <div id="welcome-screen">
+            <h3>Mass Sales Order Cockpit</h3>
+            <p>Không có dữ liệu. Vui lòng tải dữ liệu lên để bắt đầu.</p>
+            <p>Sử dụng nút <strong>"Upload Data ▼"</strong> hoặc <strong>"Download Template"</strong> trên thanh công cụ.</p>
+        </div>
+
+        <div id="cockpit-screen" style="display: none;">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="showTab('tab-complete')">✅ Complete</button>
+                <button class="tab-button" onclick="showTab('tab-incomplete')">⚠️ Incomplete</button>
+                <button class="tab-button" onclick="showTab('tab-error')">❌ Error</button>
+            </div>
+
+            <div id="tab-complete" class="tab-pane active">
+                <div class="alv-container">
+                    <h4>Header Data (<span id="count-h-comp">0</span> Rows)</h4>
+                    <div class="alv-wrapper">
+                        <table class="alv-grid" id="alv-header-complete"></table>
+                    </div>
+                </div>
+                <div class="alv-container">
+                    <h4>Item Data (<span id="count-i-comp">0</span> Rows)</h4>
+                    <div class="alv-wrapper">
+                        <table class="alv-grid" id="alv-item-complete"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-incomplete" class="tab-pane">
+                <div class="alv-container">
+                    <h4>Header Data (<span id="count-h-incomp">0</span> Rows)</h4>
+                    <div class="alv-wrapper">
+                        <table class="alv-grid" id="alv-header-incomplete"></table>
+                    </div>
+                </div>
+                <div class="alv-container">
+                    <h4>Item Data (<span id="count-i-incomp">0</span> Rows)</h4>
+                    <div class="alv-wrapper">
+                        <table class="alv-grid" id="alv-item-incomplete"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-error" class="tab-pane">
+                <div class="alv-container">
+                    <h4>Header Data (<span id="count-h-err">0</span> Rows)</h4>
+                    <div class="alv-wrapper">
+                        <table class="alv-grid" id="alv-header-error"></table>
+                    </div>
+                </div>
+                <div class="alv-container">
+                    <h4>Item Data (<span id="count-i-err">0</span> Rows)</h4>
+                    <div class="alv-wrapper">
+                        <table class="alv-grid" id="alv-item-error"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== SCREEN 0300 - SEARCH RESULTS ===================== -->
+<div id="screen-0300-search-results" style="display:none;">
+    <div class="app-bar">
+        <button class="app-button back" id="btn-back-from-search">
+            <span class="icon">⬅️</span> Back to Home
+        </button>
+        <span style="margin-left:12px; font-weight:bold;">Search Results - Order-to-Cash Documents</span>
+    </div>
+
+    <div id="search-summary">
+        <!-- will be rendered by JS -->
+    </div>
+
+    <div class="alv-container" style="margin-top:12px;">
+        <h4>Documents Found (<span id="search-count">0</span>)</h4>
+        <div class="alv-wrapper">
+            <table class="alv-grid" id="search-result-table"></table>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== POPUPS ===================== -->
+
+<!-- Sales Order Actions -->
+<div id="popup-so-actions" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>Select Sales Order Action</span>
+            <span class="modal-close" id="modal-close-so">&times;</span>
+        </div>
+        <div class="modal-body">
+            <button id="opt-single">1. Create Single Order (ZVA01)
+                <small>Create 1 sales order manually similar to VA01.</small>
+            </button>
+            <button id="opt-mass">2. Mass Upload Orders (ZVA01_MASS)
+                <small>Upload Excel file, validate and create multiple sales orders.</small>
+            </button>
+            <button id="opt-details">3. Search & Process Orders (ZVA02/03)
+                <small>Display, change or block existing sales orders.</small>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Actions (Mass Upload Screen) -->
+<div id="popup-upload-actions" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>Select Upload Mode</span>
+            <span class="modal-close" id="modal-close-upload">&times;</span>
+        </div>
+        <div class="modal-body">
+            <button id="opt-upload-new">1. Upload new file...</button>
+            <button id="opt-upload-resubmit">2. Resubmit error file...</button>
+            <button id="opt-upload-resume">3. Resume unfinished upload...</button>
+        </div>
+    </div>
+</div>
+
+<!-- NEW: Billing Actions -->
+<div id="popup-bil-actions" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>Select Billing Action</span>
+            <span class="modal-close" id="modal-close-bil">&times;</span>
+        </div>
+        <div class="modal-body">
+            <button id="opt-bil-single">
+                1. Create Single Billing
+                <small>Create billing document for a specific delivery/order (VF01).</small>
+            </button>
+            <button id="opt-bil-search">
+                2. Search and Process Billing Details
+                <small>Search billing docs to display, cancel or release to accounting (VF02/VF03).</small>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- NEW: Overview Actions -->
+<div id="popup-overview-actions" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>Select Overview Option</span>
+            <span class="modal-close" id="modal-close-overview">&times;</span>
+        </div>
+        <div class="modal-body">
+            <button id="opt-ov-track">
+                1. Track Sales Order
+                <small>View O2C status by phase: Order processing, Delivery, Billing, Accounting.</small>
+            </button>
+            <button id="opt-ov-report">
+                2. Report Monitoring
+                <small>Monitor KPIs: blocked orders, overdue deliveries, billing due, accounting pending.</small>
+            </button>
+            <button id="opt-ov-changelog">
+                3. Change Log
+                <small>Review who changed what & when across O2C documents (SO/Delivery/Billing).</small>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ================= GLOBAL DATA (SIMULATE ABAP GLOBALS) =================
+    let gv_data_loaded = false;
+
+    // Mock data for Mass Upload ALVs
+    let gt_header_comp = [], gt_item_comp = [];
+    let gt_header_incomp = [], gt_item_incomp = [];
+    let gt_header_err = [], gt_item_err = [];
+
+    // Screens
+    const screenHome        = document.getElementById('screen-0100-home');
+    const screenMassUpload  = document.getElementById('screen-0200-mass-upload');
+    const screenSearch      = document.getElementById('screen-0300-search-results');
+
+    // Popups
+    const modalSO           = document.getElementById('popup-so-actions');
+    const modalUpload      = document.getElementById('popup-upload-actions');
+    const modalBil         = document.getElementById('popup-bil-actions');
+    const modalOverview    = document.getElementById('popup-overview-actions');
+
+    // Mass Upload elements
+    const welcomeScreen = document.getElementById('welcome-screen');
+    const cockpitScreen = document.getElementById('cockpit-screen');
+    const summaryBox    = document.getElementById('summary-box');
+    const btnValidate   = document.getElementById('btn-validate');
+    const btnSaveStaging = document.getElementById('btn-save-staging');
+    const btnCreateSO   = document.getElementById('btn-create-so');
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderScreen0100();
+        renderScreen0200();
+    });
+
+    // ================= PBO SCREEN 0100 =================
+    function renderScreen0100() {
+        // Dashboard hiện tại là tĩnh – sau này có thể bind theo Sales Org / Company Code.
+    }
+
+    // ================= PBO SCREEN 0200 =================
+    function renderScreen0200() {
+        if (!gv_data_loaded) {
+            welcomeScreen.style.display = 'block';
+            cockpitScreen.style.display = 'none';
+            summaryBox.style.display = 'none';
+            btnValidate.style.display = 'none';
+            btnSaveStaging.style.display = 'none';
+            btnCreateSO.style.display = 'none';
+        } else {
+            welcomeScreen.style.display = 'none';
+            cockpitScreen.style.display = 'block';
+            summaryBox.style.display = 'block';
+            btnValidate.style.display = 'inline-block';
+            btnSaveStaging.style.display = 'inline-block';
+            btnCreateSO.style.display = 'inline-block';
+
+            renderSummary();
+            renderAllALVTabs();
+        }
+    }
+
+    // ================= EVENT HANDLERS: SCREEN 0100 =================
+
+    // Manage Sales Order
+    document.getElementById('btn-manage-so').onclick = () => {
+        modalSO.style.display = "block";
+    };
+    document.getElementById('modal-close-so').onclick = () => {
+        modalSO.style.display = "none";
+    };
+
+    document.getElementById('opt-single').onclick = () => {
+        alert("Simulate: CALL TRANSACTION 'VA01' – Create single sales order.");
+    };
+    document.getElementById('opt-mass').onclick = () => {
+        modalSO.style.display = "none";
+        screenHome.style.display = "none";
+        screenMassUpload.style.display = "block";
+        renderScreen0200();
+    };
+    document.getElementById('opt-details').onclick = () => {
+        alert("Simulate: CALL TRANSACTION 'VA02/VA03' – Search & change sales orders.");
+    };
+
+    // Manage Delivery
+    document.getElementById('btn-manage-dlv').onclick = () => {
+        alert("Simulate: Manage Delivery (VL01N/VL02N/VL03N) – CALL SCREEN 0550.");
+    };
+
+    // Manage Billing -> NEW POPUP
+    document.getElementById('btn-manage-bil').onclick = () => {
+        modalBil.style.display = "block";
+    };
+    document.getElementById('modal-close-bil').onclick = () => {
+        modalBil.style.display = "none";
+    };
+    document.getElementById('opt-bil-single').onclick = () => {
+        modalBil.style.display = "none";
+        alert("Simulate: CALL TRANSACTION 'VF01' – Create single billing document.");
+    };
+    document.getElementById('opt-bil-search').onclick = () => {
+        modalBil.style.display = "none";
+        alert("Simulate: CALL TRANSACTION 'VF02/VF03' – Search & process billing documents.");
+    };
+
+    // Overview -> NEW POPUP
+    document.getElementById('btn-overview').onclick = () => {
+        modalOverview.style.display = "block";
+    };
+    document.getElementById('modal-close-overview').onclick = () => {
+        modalOverview.style.display = "none";
+    };
+    document.getElementById('opt-ov-track').onclick = () => {
+        modalOverview.style.display = "none";
+        alert("Simulate: CALL SCREEN 'Track Sales Order' – your ZPG_TRACK_SO program.");
+    };
+    document.getElementById('opt-ov-report').onclick = () => {
+        modalOverview.style.display = "none";
+        alert("Simulate: Report Monitoring – blocked orders, overdue deliveries, billing due.");
+    };
+    document.getElementById('opt-ov-changelog').onclick = () => {
+        modalOverview.style.display = "none";
+        alert("Simulate: Change Log – list of changes across SO / Delivery / Billing.");
+    };
+
+    // Search button -> SCREEN 0300
+    document.getElementById('btn-search').onclick = () => {
+        screenHome.style.display = "none";
+        screenMassUpload.style.display = "none";
+        screenSearch.style.display = "block";
+        renderSearchResults();
+    };
+
+    document.getElementById('btn-back-from-search').onclick = () => {
+        screenSearch.style.display = "none";
+        screenHome.style.display = "block";
+        renderScreen0100();
+    };
+
+    // ================= EVENT HANDLERS: SCREEN 0200 =================
+
+    document.getElementById('btn-back-to-home').onclick = () => {
+        if (gv_data_loaded && !confirm("Data chưa được POSTED sẽ bị mất. Bạn chắc chắn muốn quay lại Home?")) {
+            return;
+        }
+        gv_data_loaded = false; // reset
+        screenMassUpload.style.display = "none";
+        screenHome.style.display = "block";
+        renderScreen0100();
+    };
+
+    // Upload popup
+    document.getElementById('btn-upload').onclick = () => {
+        modalUpload.style.display = "block";
+    };
+    document.getElementById('modal-close-upload').onclick = () => {
+        modalUpload.style.display = "none";
+    };
+
+    document.getElementById('btn-download').onclick = () => {
+        alert("Đã gọi 'Download Template' (FORM download_template).");
+    };
+
+    document.getElementById('opt-upload-new').onclick = () => {
+        modalUpload.style.display = "none";
+        alert("Simulate: PERFORM perform_mass_upload USING 'NEW'...");
+        loadAndClassifyData('NEW');
+        gv_data_loaded = true;
+        renderScreen0200();
+    };
+
+    document.getElementById('opt-upload-resubmit').onclick = () => {
+        modalUpload.style.display = "none";
+        alert("Simulate: PERFORM perform_mass_upload USING 'RESUBMIT'...");
+        loadAndClassifyData('RESUBMIT');
+        gv_data_loaded = true;
+        renderScreen0200();
+    };
+
+    document.getElementById('opt-upload-resume').onclick = () => {
+        modalUpload.style.display = "none";
+        alert("Simulate: PERFORM load_staging_from_db...");
+        loadAndClassifyData('RESUME');
+        gv_data_loaded = true;
+        renderScreen0200();
+    };
+
+    // Re-Validate
+    document.getElementById('btn-validate').onclick = () => {
+        alert("Đã gọi 'Re-Validate'. Đang đồng bộ ALV -> Z-Table và Validate lại...");
+        // Simulate: move 1 line from Incomplete + 1 from Error to Complete
+        if (gt_header_incomp.length > 0) {
+            gt_header_comp.push(gt_header_incomp.pop());
+            gt_item_comp.push(gt_item_incomp.pop());
+        }
+        if (gt_header_err.length > 0) {
+            gt_header_comp.push(gt_header_err.pop());
+            gt_item_comp.push(gt_item_err.pop());
+        }
+        renderScreen0200();
+        alert("Validate thành công. Một số dòng đã được chuyển sang tab 'Complete'.");
+    };
+
+    // Save Staging
+    document.getElementById('btn-save-staging').onclick = () => {
+        alert("Đã gọi 'Save Staging'.\n(Lưu các thay đổi trên ALV vào Z-Table mà không cần Validate lại)");
+    };
+
+    // Create Sales Order
+    document.getElementById('btn-create-so').onclick = () => {
+        const count = gt_header_comp.length;
+        if (count === 0) {
+            alert("Không có dòng 'Complete' nào để tạo SO.");
+            return;
+        }
+        alert(`Đang gọi BAPI Create SO (và Auto-Delivery) cho ${count} dòng 'Complete'...\nStatus 'READY' -> 'POSTED' trong Z-Table.`);
+        gt_header_comp = [];
+        gt_item_comp = [];
+        renderScreen0200();
+        alert("Tạo SO thành công. Tab 'Complete' đã được dọn dẹp.");
+    };
+
+    // ================= HELPER: LOAD MOCK DATA =================
+    function loadAndClassifyData(mode) {
+        // Header
+        gt_header_comp = [
+            { TEMP_ID: 'H001', ORDER_TYPE: 'ZORR', SALES_ORG: 'CNSG', CHNL: 'MK', DIV: 'C1', SOLD_TO: '1000011', CUST_REF: '200525', REQ_DATE: '2025-11-14', PRICE_DATE: '2025-11-14', PMNTTRMS: '0001', INCO: 'CFR', CURR: 'VND', ORD_DATE: '2025-11-14', SHIP_COND: '' },
+            { TEMP_ID: 'H004', ORDER_TYPE: 'ZORR', SALES_ORG: 'CNSG', CHNL: 'EC', DIV: 'C1', SOLD_TO: '1000011', CUST_REF: '200525', REQ_DATE: '2025-11-14', PRICE_DATE: '2025-11-14', PMNTTRMS: '0001', INCO: 'CFR', CURR: 'VND', ORD_DATE: '2025-11-14', SHIP_COND: '' },
+            { TEMP_ID: 'H005', ORDER_TYPE: 'ZORR', SALES_ORG: 'CNSG', CHNL: 'MK', DIV: 'FF', SOLD_TO: '1000011', CUST_REF: '200525', REQ_DATE: '2025-11-14', PRICE_DATE: '2025-11-14', PMNTTRMS: '0001', INCO: 'CFR', CURR: 'VND', ORD_DATE: '2025-11-14', SHIP_COND: '' },
+            { TEMP_ID: 'H006', ORDER_TYPE: 'ZORR', SALES_ORG: 'CNSG', CHNL: 'SE', DIV: 'FF', SOLD_TO: '1000011', CUST_REF: '200525', REQ_DATE: '2025-11-14', PRICE_DATE: '2025-11-14', PMNTTRMS: '0001', INCO: 'CFR', CURR: 'VND', ORD_DATE: '2025-11-14', SHIP_COND: '' },
+            { TEMP_ID: 'H007', ORDER_TYPE: 'ZORR', SALES_ORG: 'CNSG', CHNL: 'W1', DIV: 'FF', SOLD_TO: '1000011', CUST_REF: '200525', REQ_DATE: '2025-11-14', PRICE_DATE: '2025-11-14', PMNTTRMS: '0001', INCO: 'CFR', CURR: 'VND', ORD_DATE: '2025-11-14', SHIP_COND: '' },
+        ];
+        gt_header_incomp = [
+            { TEMP_ID: 'H002', ORDER_TYPE: 'ZORR', SALES_ORG: 'CNSG', CHNL: 'SE', DIV: 'C1', SOLD_TO: '1000011', CUST_REF: '200525', REQ_DATE: '2025-11-14', PRICE_DATE: '2025-11-14', PMNTTRMS: '', INCO: 'CFR', CURR: 'VND', ORD_DATE: '2025-11-14', SHIP_COND: '' },
+        ];
+        gt_header_err = [
+            { TEMP_ID: 'H003', ORDER_TYPE: 'ZOR', SALES_ORG: 'CNSG', CHNL: 'W1', DIV: 'C1', SOLD_TO: '9999999', CUST_REF: '200525', REQ_DATE: '2025-11-14', PRICE_DATE: '2025-11-14', PMNTTRMS: '0001', INCO: 'CFR', CURR: 'VND', ORD_DATE: '2025-11-14', SHIP_COND: '' },
+        ];
+
+        // Item
+        gt_item_comp = [
+            { TEMP_ID: 'H001', P_PROC: 'RVAJUS', ITEM_NO: 10, MATNR: 'EYELINERS', S_TEXT: 'Peach Pink', PLANT: 'FU24', S_POINT: 'FU24', S_LOC: 'TG01', QTY: 20, U_PRICE: 3000, PER: 1, UOM: 'EA', C_TYPE: 'ZPRQ' },
+            { TEMP_ID: 'H004', P_PROC: 'RVAJUS', ITEM_NO: 10, MATNR: 'EYELINERS', S_TEXT: 'Peach Pink', PLANT: 'FU24', S_POINT: 'FU24', S_LOC: 'TG01', QTY: 20, U_PRICE: 2000, PER: 1, UOM: 'EA', C_TYPE: 'ZPRQ' },
+            { TEMP_ID: 'H005', P_PROC: 'RVAJUS', ITEM_NO: 10, MATNR: 'YOGURT', S_TEXT: 'Sữa chua', PLANT: 'FU24', S_POINT: 'FU24', S_LOC: 'TG01', QTY: 20, U_PRICE: 2000, PER: 1, UOM: 'EA', C_TYPE: 'ZPRQ' },
+            { TEMP_ID: 'H006', P_PROC: 'RVAJUS', ITEM_NO: 10, MATNR: 'YOGURT', S_TEXT: 'Sữa chua', PLANT: 'FU24', S_POINT: 'FU24', S_LOC: 'TG01', QTY: 20, U_PRICE: 2000, PER: 1, UOM: 'EA', C_TYPE: 'ZPRQ' },
+            { TEMP_ID: 'H007', P_PROC: 'RVAJUS', ITEM_NO: 10, MATNR: 'YOGURT', S_TEXT: 'Sữa chua', PLANT: 'FU24', S_POINT: 'FU24', S_LOC: 'TG01', QTY: 20, U_PRICE: 2000, PER: 1, UOM: 'EA', C_TYPE: 'ZPRQ' },
+        ];
+        gt_item_incomp = [
+            { TEMP_ID: 'H002', P_PROC: 'RVAJUS', ITEM_NO: 10, MATNR: 'EYELINERS', S_TEXT: 'Peach Pink', PLANT: 'FU24', S_POINT: 'FU24', S_LOC: '', QTY: 20, U_PRICE: 3000, PER: 1, UOM: 'EA', C_TYPE: 'ZPRQ' },
+        ];
+        gt_item_err = [
+            { TEMP_ID: 'H003', P_PROC: 'RVAJUS', ITEM_NO: 10, MATNR: 'EYELINERS_SAI', S_TEXT: 'Peach Pink', PLANT: 'FU24', S_POINT: 'FU24', S_LOC: 'TG01', QTY: 20, U_PRICE: 4000, PER: 1, UOM: 'EA', C_TYPE: 'ZPRQ' },
+        ];
+    }
+
+    // ================= SUMMARY RENDER =================
+    function renderSummary() {
+        const gv_cnt_h_comp = gt_header_comp.length;
+        const gv_cnt_i_comp = gt_item_comp.length;
+        const gv_cnt_h_incomp = gt_header_incomp.length;
+        const gv_cnt_i_incomp = gt_item_incomp.length;
+        const gv_cnt_h_err = gt_header_err.length;
+        const gv_cnt_i_err = gt_item_err.length;
+        const gv_cnt_h_tot = gv_cnt_h_comp + gv_cnt_h_incomp + gv_cnt_h_err;
+        const gv_cnt_i_tot = gv_cnt_i_comp + gv_cnt_i_incomp + gv_cnt_i_err;
+
+        const lv_text_h =
+            `<span><span class="icon">📄</span> Total Headers: ${gv_cnt_h_tot}</span>` +
+            `<span><span class="icon">✅</span> Complete: ${gv_cnt_h_comp}</span>` +
+            `<span><span class="icon">⚠️</span> Incomplete: ${gv_cnt_h_incomp}</span>` +
+            `<span><span class="icon">❌</span> Error: ${gv_cnt_h_err}</span>`;
+
+        const lv_text_i =
+            `<span><span class="icon">📋</span> Total Items: ${gv_cnt_i_tot}</span>` +
+            `<span><span class="icon">✅</span> Complete: ${gv_cnt_i_comp}</span>` +
+            `<span><span class="icon">⚠️</span> Incomplete: ${gv_cnt_i_incomp}</span>` +
+            `<span><span class="icon">❌</span> Error: ${gv_cnt_i_err}</span>`;
+
+        summaryBox.innerHTML = `<div class="summary-line">${lv_text_h}</div><div class="summary-line">${lv_text_i}</div>`;
+    }
+
+    // ================= ALV RENDER =================
+    function renderAllALVTabs() {
+        // Update tab titles
+        document.querySelector(`.tab-button[onclick="showTab('tab-complete')"]`).innerText =
+            `✅ Complete (${gt_header_comp.length})`;
+        document.querySelector(`.tab-button[onclick="showTab('tab-incomplete')"]`).innerText =
+            `⚠️ Incomplete (${gt_header_incomp.length})`;
+        document.querySelector(`.tab-button[onclick="showTab('tab-error')"]`).innerText =
+            `❌ Error (${gt_header_err.length})`;
+
+        // Update counts
+        document.getElementById('count-h-comp').innerText   = gt_header_comp.length;
+        document.getElementById('count-i-comp').innerText   = gt_item_comp.length;
+        document.getElementById('count-h-incomp').innerText = gt_header_incomp.length;
+        document.getElementById('count-i-incomp').innerText = gt_item_incomp.length;
+        document.getElementById('count-h-err').innerText    = gt_header_err.length;
+        document.getElementById('count-i-err').innerText    = gt_item_err.length;
+
+        renderHeaderALV(gt_header_comp,    'alv-header-complete',   'locked');
+        renderItemALV  (gt_item_comp,      'alv-item-complete',     'locked');
+
+        renderHeaderALV(gt_header_incomp,  'alv-header-incomplete', 'editable_incomp');
+        renderItemALV  (gt_item_incomp,    'alv-item-incomplete',   'editable_incomp');
+
+        renderHeaderALV(gt_header_err,     'alv-header-error',      'editable_err');
+        renderItemALV  (gt_item_err,       'alv-item-error',        'editable_err');
+    }
+
+    function renderHeaderALV(data, tableId, mode) {
+        const table = document.getElementById(tableId);
+        table.innerHTML = '';
+
+        const headers = [
+            'Temp ID', '*Sales Order Type', '*Sales Org.', '*Dist. Chnl', '*Division',
+            'Sales Office', 'Sales Group', '*Sold-to Party', '*Cust. Ref.', '*Req. Delivery Date',
+            'Price Date', '*Payt. Term', 'Incoterm', 'Currency', 'Order Date', 'Ship. Cond.'
+        ];
+        table.innerHTML = `<thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>`;
+
+        let bodyHTML = '';
+        data.forEach(h => {
+            const isLocked  = (mode === 'locked');
+            const isIncomp  = (mode === 'editable_incomp' && h.PMNTTRMS === '');
+            const isErr     = (mode === 'editable_err' && h.SOLD_TO === '9999999');
+
+            const lock_auto   = 'locked';
+            const lock_req    = isLocked ? 'locked' : '';
+            const lock_hybrid = isLocked ? 'locked' : '';
+
+            bodyHTML += `
+                <tr>
+                    <td><input type="text" class="locked" value="${h.TEMP_ID}" readonly></td>
+                    <td><input type="text" class="${lock_req}" value="${h.ORDER_TYPE}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_req}" value="${h.SALES_ORG}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_req}" value="${h.CHNL}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_req}" value="${h.DIV}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_auto}" value="${h.SALES_OFF || ''}" readonly></td>
+                    <td><input type="text" class="${lock_auto}" value="${h.SALES_GRP || ''}" readonly></td>
+                    <td><input type="text" class="${lock_req} ${isErr ? 'cell-error' : ''}" value="${h.SOLD_TO}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_req}" value="${h.CUST_REF}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_req}" value="${h.REQ_DATE}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_auto}" value="${h.PRICE_DATE}" readonly></td>
+                    <td><input type="text" class="${lock_req} ${isIncomp ? 'cell-incomplete' : ''}" value="${h.PMNTTRMS}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_hybrid}" value="${h.INCO}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_auto}" value="${h.CURR}" readonly></td>
+                    <td><input type="text" class="${lock_auto}" value="${h.ORD_DATE}" readonly></td>
+                    <td><input type="text" class="${lock_auto}" value="${h.SHIP_COND || ''}" readonly></td>
+                </tr>
+            `;
+        });
+        table.innerHTML += `<tbody>${bodyHTML}</tbody>`;
+    }
+
+    function renderItemALV(data, tableId, mode) {
+        const table = document.getElementById(tableId);
+        table.innerHTML = '';
+
+        const headers = [
+            'Temp ID', 'Pricing Proc.', 'Item No', '*Material', '(L) Short Text',
+            'Plant', 'Ship. Point', '*Storage Loc.', '*Order Qty',
+            '(H) Unit Price', '(L) Per', '(L) UoM', '*Cond. Type'
+        ];
+        table.innerHTML = `<thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>`;
+
+        let bodyHTML = '';
+        data.forEach(i => {
+            const isLocked = (mode === 'locked');
+            const isErr    = (mode === 'editable_err' && i.MATNR === 'EYELINERS_SAI');
+            const isIncomp = (mode === 'editable_incomp' && i.S_LOC === '');
+
+            const lock_locked  = 'locked';
+            const lock_editable = isLocked ? 'locked' : '';
+
+            bodyHTML += `
+                <tr>
+                    <td><input type="text" class="locked" value="${i.TEMP_ID}" readonly></td>
+                    <td><input type="text" class="${lock_editable}" value="${i.P_PROC}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_editable}" value="${i.ITEM_NO}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_editable} ${isErr ? 'cell-error' : ''}" value="${i.MATNR}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_locked}" value="${i.S_TEXT}" readonly></td>
+                    <td><input type="text" class="${lock_editable}" value="${i.PLANT}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_editable}" value="${i.S_POINT}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_editable} ${isIncomp ? 'cell-incomplete' : ''}" value="${i.S_LOC}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_editable}" value="${i.QTY}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_editable}" value="${i.U_PRICE}" ${isLocked ? 'readonly' : ''}></td>
+                    <td><input type="text" class="${lock_locked}" value="${i.PER}" readonly></td>
+                    <td><input type="text" class="${lock_locked}" value="${i.UOM}" readonly></td>
+                    <td><input type="text" class="${lock_editable}" value="${i.C_TYPE}" ${isLocked ? 'readonly' : ''}></td>
+                </tr>
+            `;
+        });
+        table.innerHTML += `<tbody>${bodyHTML}</tbody>`;
+    }
+
+    // ================= TAB HANDLER =================
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.style.display = 'none');
+        document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+        document.getElementById(tabId).style.display = 'block';
+        document.querySelector(`.tab-button[onclick="showTab('${tabId}')"]`).classList.add('active');
+    }
+
+    // ================= SEARCH RESULT RENDER (SCREEN 0300) =================
+    function renderSearchResults() {
+    const salesOrg   = document.getElementById('sel-sales-org').value || '-';
+    const compCode   = document.getElementById('sel-comp-code').value || '-';
+    const orderNo    = document.getElementById('sel-order-no').value || '-';
+    const deliveryNo = document.getElementById('sel-delivery-no').value || '-';
+    const billingNo  = document.getElementById('sel-billing-no').value || '-';
+
+    const summaryDiv = document.getElementById('search-summary');
+    summaryDiv.innerHTML = `
+        <div class="info-line"><strong>Organization Data:</strong> Sales Org = ${salesOrg}, Company Code = ${compCode}</div>
+        <div class="info-line"><strong>Document Information:</strong> SO = ${orderNo}, Delivery = ${deliveryNo}, Billing = ${billingNo}</div>
+        <div class="info-line" style="margin-top:4px;">(Mock) Kết quả minh họa cho việc quản lý Order-to-Cash.</div>
+    `;
+
+    const resultTable = document.getElementById('search-result-table');
+
+    /* ================= MOCK DATA + ICON + COLOR ================= */
+    const data = [
+        {
+            phase: 'Order processing',
+            icon: '📄',
+            phaseClass: 'phase-order',
+            docType: 'Sales Order',
+            docNo: '80000001',
+            refDoc: '',
+            status: 'Delivery created',
+            statusClass: 'status-inprocess',
+            amount: '10,000,000 VND',
+            createdBy: 'TRAMNNB8',
+            date: '2025-11-14'
+        },
+        {
+            phase: 'Delivery processing',
+            icon: '🚚',
+            phaseClass: 'phase-delivery',
+            docType: 'Delivery',
+            docNo: '80050001',
+            refDoc: '80000001',
+            status: 'PGI posted',
+            statusClass: 'status-complete',
+            amount: '10,000,000 VND',
+            createdBy: 'SD_USER',
+            date: '2025-11-15'
+        },
+        {
+            phase: 'Invoice processing',
+            icon: '🧾',
+            phaseClass: 'phase-billing',
+            docType: 'Billing',
+            docNo: '90000001',
+            refDoc: '80050001',
+            status: 'Released to Accounting',
+            statusClass: 'status-released',
+            amount: '10,000,000 VND',
+            createdBy: 'SD_BILL',
+            date: '2025-11-16'
+        },
+        {
+            phase: 'Accounting',
+            icon: '💰',
+            phaseClass: 'phase-accounting',
+            docType: 'Accounting Doc',
+            docNo: '140000001',
+            refDoc: '90000001',
+            status: 'Cleared',
+            statusClass: 'status-cleared',
+            amount: '10,000,000 VND',
+            createdBy: 'FI_USER',
+            date: '2025-11-17'
+        }
+    ];
+
+    document.getElementById('search-count').innerText = data.length;
+
+    const headers = [
+        'Process Phase',
+        'Document Type',
+        'Document No.',
+        'Reference Doc.',
+        'Status',
+        'Amount',
+        'Created By',
+        'Date'
+    ];
+
+    resultTable.innerHTML = `<thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>`;
+
+    let bodyHTML = '';
+    data.forEach(row => {
+        bodyHTML += `
+            <tr>
+                <td>
+                    <span class="phase-badge ${row.phaseClass}">
+                        ${row.icon} ${row.phase}
+                    </span>
+                </td>
+
+                <td>${row.docType}</td>
+                <td>${row.docNo}</td>
+                <td>${row.refDoc}</td>
+
+                <td>
+                    <span class="status-badge ${row.statusClass}">
+                        ${row.status}
+                    </span>
+                </td>
+
+                <td>${row.amount}</td>
+                <td>${row.createdBy}</td>
+                <td>${row.date}</td>
+            </tr>
+        `;
+    });
+
+    resultTable.innerHTML += `<tbody>${bodyHTML}</tbody>`;
+}
+
+</script>
+</body>
+              </html>
